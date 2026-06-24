@@ -239,7 +239,6 @@
   </div>
 </div>
 
-<script src="config.js"></script>
 <script>
   const API_URL = window.UNIDATAS_API_URL || 'http://localhost:8000';
   const token = sessionStorage.getItem('token');
@@ -264,13 +263,13 @@
 
   document.getElementById('btnSair').addEventListener('click', () => {
     sessionStorage.clear();
-    window.location.href = 'unidatas-login.html';
+    window.location.href = 'portal-login.html';
   });
 
   async function carregarPerfil() {
     try {
       const res = await fetch(`${API_URL}/me`, { headers: headers() });
-      if (res.status === 401) { sessionStorage.clear(); window.location.href = 'unidatas-login.html'; return; }
+      if (res.status === 401) { sessionStorage.clear(); window.location.href = 'portal-login.html'; return; }
       const dados = await res.json();
       const nome = dados.nome || dados.email.split('@')[0];
       document.getElementById('saudacao').textContent = `Olá, ${nome}`;
