@@ -242,7 +242,7 @@
 <script>
   const API_URL = window.UNIDATAS_API_URL || 'https://venc123-production.up.railway.app';
   const token = sessionStorage.getItem('token');
-  if (!token) window.location.href = 'painel.html';
+  if (!token) window.location.href = 'portal-login.html';
 
   function headers() {
     return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
