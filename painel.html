@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UniDatas — Painel</title>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,9 +100,9 @@
   .modal-fechar { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #888; font-size: 22px; cursor: pointer; line-height: 1; }
   .modal-fechar:hover { color: #fff; }
 
-  /* Vídeo fullscreen corrigido */
-  .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 4px; background: #000; }
-  .video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    /* Video container — Plyr player */
+    .video-wrap { position: relative; border-radius: 4px; background: #000; }
+    .video-wrap .plyr { border-radius: 4px; }
 
   .btn-marcar { margin-top: 14px; background: #fff; color: #1a1a1a; border: none; border-radius: 4px; padding: 9px 18px; font-size: 12px; font-family: inherit; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; transition: background 0.15s; }
   .btn-marcar:hover { background: #e0e0e0; }
@@ -164,6 +165,7 @@
     .aula-meta { font-size: 11px; }
   }
 </style>
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 </head>
 <body>
 
@@ -305,13 +307,7 @@
     <button class="modal-fechar" onclick="fecharModal()">✕</button>
     <div class="modal-titulo" id="modalTitulo">Aula</div>
     <div class="video-wrap">
-      <!-- allowfullscreen e webkitallowfullscreen para iOS/Android -->
-      <iframe id="videoFrame"
-        allowfullscreen
-        webkitallowfullscreen
-        mozallowfullscreen
-        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-      ></iframe>
+      <div id="player"></div>
     </div>
     <button class="btn-marcar" id="btnMarcar" onclick="marcarAssistido()">✓ Marcar como assistido</button>
 
@@ -333,6 +329,7 @@
 
   let todasAulas = [];
   let aulaAtualId = null;
+  let plyrPlayer = null;
 
   const titulos = { cursos: 'Meus Cursos', aulas: 'Aulas', downloads: 'Downloads', suporte: 'Suporte' };
 
@@ -430,13 +427,22 @@
       const dados = await res.json();
       aulaAtualId = aulaId;
 
-      let embedUrl = dados.link_video;
       const yt = dados.link_video.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-      // fs=1 habilita botão fullscreen no YouTube
-      if (yt) embedUrl = `https://www.youtube.com/embed/${yt[1]}?autoplay=1&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1&fs=1`;
+      const videoId = yt ? yt[1] : null;
 
       document.getElementById('modalTitulo').textContent = titulo;
-      document.getElementById('videoFrame').src = embedUrl;
+
+      if (plyrPlayer) { plyrPlayer.destroy(); plyrPlayer = null; }
+
+      if (videoId) {
+        document.getElementById('player').innerHTML = '';
+        document.getElementById('player').setAttribute('data-plyr-provider', 'youtube');
+        document.getElementById('player').setAttribute('data-plyr-embed-id', videoId);
+        plyrPlayer = new Plyr('#player', {
+          controls: ['play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'fullscreen'],
+          autoplay: true
+        });
+      }
 
       const descricao = dados.descricao || '';
       const descBox = document.getElementById('modalDescricao');
@@ -454,12 +460,14 @@
       else { btn.textContent = '✓ Marcar como assistido'; btn.disabled = false; btn.style.opacity = '1'; }
 
       document.getElementById('modalVideo').classList.add('aberto');
-      document.body.style.overflow = 'hidden'; // evita scroll fora do modal
+      document.body.style.overflow = 'hidden';
     } catch(e) { alert('Erro ao carregar a aula. Tente novamente.'); }
   }
 
   function fecharModal() {
-    document.getElementById('videoFrame').src = '';
+    if (plyrPlayer) { plyrPlayer.destroy(); plyrPlayer = null; }
+    document.getElementById('player').removeAttribute('data-plyr-provider');
+    document.getElementById('player').removeAttribute('data-plyr-embed-id');
     document.getElementById('modalVideo').classList.remove('aberto');
     document.body.style.overflow = '';
     aulaAtualId = null;
@@ -510,7 +518,6 @@
   function detectarDevTools() {
     const threshold = 300;
     if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
-      document.getElementById('videoFrame').src = '';
       fecharModal();
       if (!document.getElementById('avisoSeguranca')) {
         document.body.insertAdjacentHTML('beforeend', `
