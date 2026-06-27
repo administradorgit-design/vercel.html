@@ -7,6 +7,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'Inter', Arial, sans-serif;
     background: #000;
@@ -17,22 +18,30 @@
     overflow: hidden;
     color: #fff;
   }
-  #matrixCanvas {
+
+  /* LINHAS DE CIRCUITO */
+  .deco-lines {
     position: fixed;
     inset: 0;
     z-index: 0;
-    background: #000;
+    pointer-events: none;
+    overflow: hidden;
   }
+  .deco-lines svg { width: 100%; height: 100%; }
+
+  /* CARD */
   .card {
     position: relative;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.85);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(0,0,0,0.85);
+    border: 1px solid rgba(255,255,255,0.07);
     border-radius: 10px;
     padding: 40px 40px 32px;
     width: 360px;
-    box-shadow: 0 16px 70px rgba(0,0,0,0.45);
+    box-shadow: 0 16px 70px rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
   }
+
   .logo {
     text-align: center;
     font-size: 22px;
@@ -41,51 +50,46 @@
     color: #eee;
     margin-bottom: 28px;
   }
+
   hr {
     border: none;
-    border-top: 1px solid rgba(255,255,255,0.12);
+    border-top: 1px solid rgba(255,255,255,0.1);
     margin-bottom: 28px;
   }
+
   label {
     display: block;
     font-size: 12px;
     font-weight: 600;
-    color: #ddd;
+    color: #aab;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 6px;
   }
+
   input {
     width: 100%;
-    border: 1px solid rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 4px;
     padding: 10px 12px;
     font-size: 14px;
     font-family: inherit;
     color: #eee;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.04);
     outline: none;
     margin-bottom: 18px;
     transition: border-color 0.15s, background 0.15s;
   }
   input:focus {
-    border-color: #bbb;
-    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.07);
   }
-  .forgot {
-    display: block;
-    font-size: 12px;
-    color: #d4d4d4;
-    text-decoration: none;
-    margin-top: -12px;
-    margin-bottom: 22px;
-  }
-  .forgot:hover { color: #333; text-decoration: underline; }
+
   .btn {
     width: 100%;
-    background: #1a1a1a;
+    background: #111;
     color: #fff;
-    border: none;
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 4px;
     padding: 11px;
     font-size: 13px;
@@ -93,26 +97,47 @@
     font-weight: 600;
     letter-spacing: 1.5px;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s, border-color 0.15s;
   }
-  .btn:hover { background: #f2f2f2; color: #111; }
-  .btn:disabled { background: #555; cursor: not-allowed; }
+  .btn:hover { background: #222; border-color: rgba(255,255,255,0.25); }
+  .btn:disabled { background: #333; border-color: transparent; cursor: not-allowed; }
+
   .error {
     display: none;
     font-size: 12px;
-    color: #cc0000;
+    color: #e63946;
     margin-bottom: 12px;
   }
+
   footer {
     text-align: center;
     font-size: 11px;
-    color: #bbb;
+    color: #3a4a5a;
     margin-top: 24px;
   }
 </style>
 </head>
 <body>
-<canvas id="matrixCanvas"></canvas>
+
+<!-- Linhas de circuito -->
+<div class="deco-lines">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#444" stroke-width="1" fill="none" opacity="0.7">
+      <!-- direita -->
+      <polyline points="1100,0 1100,200 1300,200 1300,400 1200,400 1200,600"/>
+      <polyline points="1300,300 1440,300"/>
+      <circle cx="1300" cy="200" r="3" fill="#444"/>
+      <circle cx="1200" cy="400" r="3" fill="#444"/>
+      <!-- esquerda -->
+      <polyline points="200,900 200,650 50,650 50,450 150,450"/>
+      <polyline points="50,550 0,550"/>
+      <circle cx="50" cy="650" r="3" fill="#444"/>
+      <!-- ponto ciano -->
+      <circle cx="50" cy="820" r="5" fill="#666" opacity="0.8"/>
+    </g>
+  </svg>
+</div>
+
 <div class="card">
   <div class="logo">BEM VINDOS!</div>
   <hr>
@@ -124,12 +149,12 @@
   <button class="btn" id="loginBtn" onclick="handleLogin()">ENTRAR</button>
   <footer>© 2024 UniDatas. Todos os direitos reservados.</footer>
 </div>
+
 <script>
   const API_URL = window.UNIDATAS_API_URL || 'https://venc123-production.up.railway.app';
-  // Controle de tentativas no lado do cliente (camada extra — o back-end também bloqueia)
   let tentativas = 0;
   const MAX_TENTATIVAS = 5;
-  const BLOQUEIO_MS = 30000; // 30 segundos
+  const BLOQUEIO_MS = 30000;
   let bloqueadoAte = null;
 
   function setErro(msg) {
@@ -137,12 +162,9 @@
     err.textContent = msg;
     err.style.display = 'block';
   }
-
   function limpaErro() {
-    const err = document.getElementById('errorMsg');
-    err.style.display = 'none';
+    document.getElementById('errorMsg').style.display = 'none';
   }
-
   function setBotao(loading) {
     const btn = document.getElementById('loginBtn');
     btn.disabled = loading;
@@ -151,52 +173,29 @@
 
   async function handleLogin() {
     limpaErro();
-
-    // Verifica bloqueio local
     if (bloqueadoAte && Date.now() < bloqueadoAte) {
       const seg = Math.ceil((bloqueadoAte - Date.now()) / 1000);
       setErro(`Muitas tentativas. Tente novamente em ${seg}s.`);
       return;
     }
-
     const email = document.getElementById('email').value.trim().toLowerCase();
     const password = document.getElementById('password').value;
-
-    // Validações básicas no front
-    if (!email || !password) {
-      setErro('Preencha e-mail e senha.');
-      return;
-    }
-
+    if (!email || !password) { setErro('Preencha e-mail e senha.'); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setErro('Digite um e-mail válido.');
-      return;
-    }
-
-    if (password.length < 6) {
-      setErro('A senha deve ter pelo menos 6 caracteres.');
-      return;
-    }
-
+    if (!emailRegex.test(email)) { setErro('Digite um e-mail válido.'); return; }
+    if (password.length < 6) { setErro('A senha deve ter pelo menos 6 caracteres.'); return; }
     setBotao(true);
-
     try {
-      // Toda autenticação acontece no back-end — nenhuma credencial no front
       const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-
       const data = await response.json();
-
       if (response.ok && data.token) {
-        // Guarda o JWT em sessionStorage (some ao fechar o navegador)
         sessionStorage.setItem('token', data.token);
         sessionStorage.setItem('usuario', email);
         tentativas = 0;
-        // Redireciona pro dashboard
         window.location.href = 'painel.html';
       } else {
         tentativas++;
@@ -214,45 +213,7 @@
     }
   }
 
-  // Submit com Enter
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleLogin();
-  });
-
-  const canvas = document.getElementById('matrixCanvas');
-  const ctx = canvas.getContext('2d');
-  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
-  const fontSize = 18;
-  const velocidade = 0.45;
-  let drops = [];
-
-  function ajustarCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const colunas = Math.floor(canvas.width / fontSize);
-    drops = Array.from({ length: colunas }, () => 1);
-  }
-
-  function desenharMatriz() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#e5e5e5';
-    ctx.font = `${fontSize}px monospace`;
-
-    for (let i = 0; i < drops.length; i++) {
-      const texto = caracteres[Math.floor(Math.random() * caracteres.length)];
-      ctx.fillText(texto, i * fontSize, drops[i] * fontSize);
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-      drops[i] += velocidade;
-    }
-    requestAnimationFrame(desenharMatriz);
-  }
-
-  ajustarCanvas();
-  window.addEventListener('resize', ajustarCanvas);
-  desenharMatriz();
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 </script>
 </body>
 </html>
