@@ -214,6 +214,37 @@
   }
 
   document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+  /* ── PROTEÇÃO DEVTOOLS ── */
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'F12') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); return false; }
+    if (e.ctrlKey && ['U','u','S','s'].includes(e.key)) { e.preventDefault(); return false; }
+  });
+
+  (function() {
+    let violacao = false;
+    function detectarDevTools() {
+      if (violacao) return;
+      const threshold = 200;
+      const wDiff = window.outerWidth - window.innerWidth;
+      const hDiff = window.outerHeight - window.innerHeight;
+      if (wDiff > threshold || hDiff > threshold) {
+        violacao = true;
+        document.body.innerHTML = `
+          <div style="position:fixed;inset:0;background:#000;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;font-family:Arial;">
+            <div style="color:#fff;font-size:22px;font-weight:700;">ACESSO BLOQUEADO</div>
+            <div style="color:#e63946;font-size:14px;text-align:center;max-width:400px;">Ferramentas de desenvolvedor foram detectadas. O sistema foi encerrado por violação de segurança.</div>
+            <div style="color:#666;font-size:12px;text-align:center;max-width:340px;">Feche o DevTools, limpe seus dados e acesse novamente.</div>
+            <button onclick="window.location.href='portal-login.html'" style="background:#e63946;color:#fff;border:none;padding:12px 32px;border-radius:4px;font-weight:700;cursor:pointer;font-size:14px;">RETORNAR</button>
+          </div>
+        `;
+      }
+    }
+    setInterval(detectarDevTools, 1500);
+    window.addEventListener('resize', detectarDevTools);
+  })();
 </script>
 </body>
 </html>
