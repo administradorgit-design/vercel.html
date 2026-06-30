@@ -515,32 +515,37 @@
     document.getElementById('suporteAssunto').value = '';
   }
 
-  /* ── PROTEÇÃO DEVTOOLS ── */
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'F12') { e.preventDefault(); return false; }
-    if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); return false; }
-    if (e.ctrlKey && ['U','u','S','s'].includes(e.key)) { e.preventDefault(); return false; }
-  });
+  /* ── PROTEÇÃO DEVTOOLS (apenas desktop) ── */
+  (function() {
+    const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.innerWidth < 768;
+    if (isMobile) return;
 
-  function detectarDevTools() {
-    const threshold = 300;
-    if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
-      fecharModal();
-      if (!document.getElementById('avisoSeguranca')) {
-        document.body.insertAdjacentHTML('beforeend', `
-          <div id="avisoSeguranca" style="position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
-            <div style="color:#fff;font-size:16px;font-weight:600;font-family:Arial;">⚠️ Conteúdo protegido</div>
-            <div style="color:#888;font-size:13px;font-family:Arial;text-align:center;max-width:300px;">Ferramentas de desenvolvedor não são permitidas nesta plataforma.</div>
-            <button onclick="location.reload()" style="background:#fff;color:#000;border:none;padding:10px 24px;border-radius:4px;font-weight:600;cursor:pointer;font-family:Arial;">Recarregar página</button>
-          </div>
-        `);
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'F12') { e.preventDefault(); return false; }
+      if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); return false; }
+      if (e.ctrlKey && ['U','u','S','s'].includes(e.key)) { e.preventDefault(); return false; }
+    });
+
+    function detectarDevTools() {
+      const threshold = 300;
+      if (window.outerWidth - window.innerWidth > threshold) {
+        fecharModal();
+        if (!document.getElementById('avisoSeguranca')) {
+          document.body.insertAdjacentHTML('beforeend', `
+            <div id="avisoSeguranca" style="position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+              <div style="color:#fff;font-size:16px;font-weight:600;font-family:Arial;">⚠️ Conteúdo protegido</div>
+              <div style="color:#888;font-size:13px;font-family:Arial;text-align:center;max-width:300px;">Ferramentas de desenvolvedor não são permitidas nesta plataforma.</div>
+              <button onclick="location.reload()" style="background:#fff;color:#000;border:none;padding:10px 24px;border-radius:4px;font-weight:600;cursor:pointer;font-family:Arial;">Recarregar página</button>
+            </div>
+          `);
+        }
       }
     }
-  }
 
-  setInterval(detectarDevTools, 2000);
-  window.addEventListener('resize', detectarDevTools);
+    setInterval(detectarDevTools, 2000);
+    window.addEventListener('resize', detectarDevTools);
+  })();
 
   carregarPerfil();
   carregarAulas();
