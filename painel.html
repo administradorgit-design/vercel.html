@@ -92,6 +92,21 @@
   .btn-enviar:hover { background: #333; }
   .suporte-ok { display: none; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; padding: 12px 16px; font-size: 13px; color: #444; margin-top: 16px; }
 
+  /* ── MODAL DOWNLOAD CONSENT ── */
+  .download-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
+  .download-modal-overlay.aberto { display: flex; }
+  .download-modal { background: #fff; border-radius: 8px; width: 100%; max-width: 500px; padding: 28px; max-height: 90vh; overflow-y: auto; }
+  .download-modal h3 { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+  .download-modal .legal-text { font-size: 12.5px; color: #555; line-height: 1.6; margin-bottom: 18px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 4px; padding: 14px; }
+  .download-modal .legal-text strong { color: #1a1a1a; }
+  .download-modal .checkbox-wrap { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; cursor: pointer; }
+  .download-modal .checkbox-wrap input { margin-top: 2px; width: 16px; height: 16px; accent-color: #1a1a1a; flex-shrink: 0; }
+  .download-modal .checkbox-wrap label { font-size: 12px; color: #555; line-height: 1.5; cursor: pointer; }
+  .download-modal .btn-confirmar { width: 100%; background: #1a1a1a; color: #fff; border: none; border-radius: 4px; padding: 12px; font-size: 13px; font-family: inherit; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; transition: background 0.15s; }
+  .download-modal .btn-confirmar:hover { background: #333; }
+  .download-modal .btn-confirmar:disabled { background: #888; cursor: not-allowed; }
+  .download-modal .btn-cancelar { width: 100%; background: none; border: 1px solid #ccc; border-radius: 4px; padding: 10px; font-size: 13px; font-family: inherit; color: #888; cursor: pointer; margin-top: 8px; }
+
   /* ── MODAL ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
   .modal-overlay.aberto { display: flex; }
@@ -279,7 +294,7 @@
         <div style="font-size:14px;font-weight:700;color:#111;margin-bottom:3px;">Sistema Bot de Odds — Arquivo Completo</div>
         <div style="font-size:12px;color:#888;">Arquivo .zip com todo o sistema pronto para configurar</div>
       </div>
-      <a href="https://drive.google.com/uc?export=download&id=1AenXHdzG9nopGiVTpea7rs5O6bJCgHy7" target="_blank" style="background:#1a1a1a;color:#fff;border:none;border-radius:4px;padding:10px 18px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;letter-spacing:.5px;text-decoration:none;white-space:nowrap;flex-shrink:0;">BAIXAR</a>
+      <button onclick="abrirDownloadModal()" style="background:#1a1a1a;color:#fff;border:none;border-radius:4px;padding:10px 18px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;">BAIXAR</button>
     </div>
   </div>
 
@@ -299,6 +314,27 @@
   </div>
 
   <footer>© 2024 UniDatas. Todos os direitos reservados.</footer>
+</div>
+
+<!-- MODAL DOWNLOAD CONSENT -->
+<div class="download-modal-overlay" id="downloadModal">
+  <div class="download-modal">
+    <h3>Termo de Consentimento para Download</h3>
+    <div class="legal-text">
+      <strong>Art. 49 do Código de Defesa do Consumidor (Lei nº 8.078/90):</strong><br>
+      O consumidor pode desistir da compra em até 7 dias. Contudo, o direito de arrependimento <strong>não se aplica a produtos digitais que tenham sido baixados ou acessados</strong>, conforme interpretação consolidada do CDC e jurisprudência dos tribunais brasileiros.<br><br>
+      <strong>Ao marcar a caixa abaixo, você declara que:</strong><br>
+      • Leu e concorda com os termos de uso da plataforma<br>
+      • Entende que o download do conteúdo implica na perda do direito de reembolso<br>
+      • Está ciente de que seus dados de acesso (nome, e-mail, IP e data/hora) serão registrados como prova de consentimento
+    </div>
+    <div class="checkbox-wrap">
+      <input type="checkbox" id="checkConsent" onchange="atualizarBotaoConsent()">
+      <label for="checkConsent">Li e concordo com os termos. Entendo que perderei o direito de reembolso após baixar o conteúdo.</label>
+    </div>
+    <button class="btn-confirmar" id="btnConfirmDownload" disabled onclick="confirmarDownload()">CONFIRMAR E BAIXAR</button>
+    <button class="btn-cancelar" onclick="fecharDownloadModal()">Cancelar</button>
+  </div>
 </div>
 
 <!-- MODAL VÍDEO -->
@@ -546,6 +582,37 @@
     setInterval(detectarDevTools, 2000);
     window.addEventListener('resize', detectarDevTools);
   })();
+
+  /* ── DOWNLOAD COM CONSENTIMENTO ── */
+  const DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=1AenXHdzG9nopGiVTpea7rs5O6bJCgHy7';
+
+  function abrirDownloadModal() {
+    document.getElementById('downloadModal').classList.add('aberto');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('checkConsent').checked = false;
+    document.getElementById('btnConfirmDownload').disabled = true;
+  }
+
+  function fecharDownloadModal() {
+    document.getElementById('downloadModal').classList.remove('aberto');
+    document.body.style.overflow = '';
+  }
+
+  function atualizarBotaoConsent() {
+    document.getElementById('btnConfirmDownload').disabled = !document.getElementById('checkConsent').checked;
+  }
+
+  async function confirmarDownload() {
+    const btn = document.getElementById('btnConfirmDownload');
+    btn.disabled = true;
+    btn.textContent = 'REGISTRANDO...';
+    try {
+      await fetch(`${API_URL}/download-consent`, { method: 'POST', headers: headers() });
+    } catch(e) {}
+    fecharDownloadModal();
+    window.open(DOWNLOAD_URL, '_blank');
+    btn.textContent = 'CONFIRMAR E BAIXAR';
+  }
 
   carregarPerfil();
   carregarAulas();
