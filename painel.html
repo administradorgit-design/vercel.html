@@ -442,15 +442,21 @@
       return;
     }
     lista.innerHTML = todasAulas.map(a => `
-      <div class="aula-card" onclick="abrirAula('${a.id}', '${a.titulo}')">
+      <div class="aula-card" data-aula-id="${a.id}" data-aula-titulo="${escaparHTML(a.titulo).replace(/\n/g, ' ')}">
         <div class="aula-num ${a.assistido ? 'assistido' : ''}">${a.ordem}</div>
         <div class="aula-info">
-          <div class="aula-titulo">${a.titulo}</div>
-          <div class="aula-meta">${a.modulo} • ${a.duracao}</div>
+          <div class="aula-titulo">${escaparHTML(a.titulo)}</div>
+          <div class="aula-meta">${escaparHTML(a.modulo)} • ${escaparHTML(a.duracao)}</div>
         </div>
         <div class="aula-status ${a.assistido ? 'ok' : ''}">${a.assistido ? '✓ Assistido' : 'Assistir'}</div>
       </div>
     `).join('');
+
+    lista.querySelectorAll('.aula-card').forEach(card => {
+      card.addEventListener('click', () => {
+        abrirAula(card.dataset.aulaId, card.dataset.aulaTitulo);
+      });
+    });
   }
 
   function atualizarProgresso(pct) {
@@ -556,9 +562,8 @@
 
   /* ── PROTEÇÃO DEVTOOLS (apenas desktop) ── */
   (function() {
-    const IGNORAR_DEVTOOLS = true; // DEBUG: desativa o bloqueio de DevTools para depuração
     const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.innerWidth < 768;
-    if (isMobile || IGNORAR_DEVTOOLS) return;
+    if (isMobile) return;
 
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', function(e) {
