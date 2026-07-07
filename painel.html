@@ -343,7 +343,7 @@
 <!-- MODAL VÍDEO -->
 <div class="modal-overlay" id="modalVideo">
   <div class="modal">
-    <button class="modal-fechar" onclick="fecharModal()">✕</button>
+    <button class="modal-fechar" onclick="fecharModal(event)" type="button">✕</button>
     <div class="modal-titulo" id="modalTitulo">Aula</div>
     <div class="video-wrap">
       <div id="player"></div>
@@ -517,17 +517,36 @@
     } catch(e) { alert('Erro ao carregar a aula. Tente novamente.'); }
   }
 
-  function fecharModal() {
-    if (plyrPlayer) { plyrPlayer.destroy(); plyrPlayer = null; }
-    document.getElementById('player').removeAttribute('data-plyr-provider');
-    document.getElementById('player').removeAttribute('data-plyr-embed-id');
-    document.getElementById('modalVideo').classList.remove('aberto');
+  function fecharModal(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const modalVideo = document.getElementById('modalVideo');
+    const player = document.getElementById('player');
+
+    if (plyrPlayer) {
+      try { plyrPlayer.destroy(); } catch (e) { console.error('Erro ao destruir player:', e); }
+      plyrPlayer = null;
+    }
+
+    if (player) {
+      player.innerHTML = '';
+      player.removeAttribute('data-plyr-provider');
+      player.removeAttribute('data-plyr-embed-id');
+    }
+
+    if (modalVideo) modalVideo.classList.remove('aberto');
     document.body.style.overflow = '';
     aulaAtualId = null;
   }
 
-  document.getElementById('modalVideo').addEventListener('click', function(e) { if (e.target === this) fecharModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModal(); });
+  const modalVideo = document.getElementById('modalVideo');
+  if (modalVideo) {
+    modalVideo.addEventListener('click', function(e) { if (e.target === this) fecharModal(e); });
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModal(e); });
 
   async function marcarAssistido() {
     if (!aulaAtualId) return;
