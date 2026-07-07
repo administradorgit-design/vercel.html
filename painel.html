@@ -556,8 +556,9 @@
 
   /* ── PROTEÇÃO DEVTOOLS (apenas desktop) ── */
   (function() {
+    const IGNORAR_DEVTOOLS = true; // DEBUG: desativa o bloqueio de DevTools para depuração
     const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.innerWidth < 768;
-    if (isMobile) return;
+    if (isMobile || IGNORAR_DEVTOOLS) return;
 
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', function(e) {
