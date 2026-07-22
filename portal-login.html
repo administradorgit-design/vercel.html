@@ -10,15 +10,13 @@
 
   body {
     font-family: 'Inter', Arial, sans-serif;
-    background:
-      radial-gradient(circle at top left, rgba(120,169,255,0.15), transparent 28%),
-      linear-gradient(135deg, #07111b 0%, #0c1724 100%);
+    background: #000;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    color: #f3f6fb;
+    color: #fff;
   }
 
   .deco-lines {
@@ -33,13 +31,13 @@
   .card {
     position: relative;
     z-index: 1;
-    background: linear-gradient(135deg, rgba(16,32,49,0.96), rgba(8,18,30,0.96));
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
+    background: rgba(0,0,0,0.85);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
     padding: 40px 40px 32px;
     width: 360px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-    backdrop-filter: blur(8px);
+    box-shadow: 0 16px 70px rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
   }
 
   .logo {
@@ -47,21 +45,21 @@
     font-size: 22px;
     font-weight: 700;
     letter-spacing: 3px;
-    color: #eaf2ff;
-    margin-bottom: 22px;
+    color: #eee;
+    margin-bottom: 28px;
   }
 
   hr {
     border: none;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    margin-bottom: 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 28px;
   }
 
   label {
     display: block;
     font-size: 12px;
     font-weight: 600;
-    color: #9fb0c7;
+    color: #aab;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 6px;
@@ -69,51 +67,50 @@
 
   input {
     width: 100%;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
     padding: 10px 12px;
     font-size: 14px;
     font-family: inherit;
-    color: #f3f6fb;
+    color: #eee;
     background: rgba(255,255,255,0.04);
     outline: none;
     margin-bottom: 18px;
     transition: border-color 0.15s, background 0.15s;
   }
   input:focus {
-    border-color: rgba(120,169,255,0.4);
+    border-color: rgba(255,255,255,0.25);
     background: rgba(255,255,255,0.07);
   }
 
   .btn {
     width: 100%;
-    background: linear-gradient(135deg, #78a9ff, #4f7dd0);
+    background: #111;
     color: #fff;
-    border: none;
-    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
     padding: 11px;
     font-size: 13px;
     font-family: inherit;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
     cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 12px 24px rgba(79,125,208,0.24);
+    transition: background 0.15s, border-color 0.15s;
   }
-  .btn:hover { transform: translateY(-1px); box-shadow: 0 14px 28px rgba(79,125,208,0.32); }
-  .btn:disabled { background: #485766; box-shadow: none; cursor: not-allowed; transform: none; }
+  .btn:hover { background: #222; border-color: rgba(255,255,255,0.25); }
+  .btn:disabled { background: #333; border-color: transparent; cursor: not-allowed; }
 
   .error {
     display: none;
     font-size: 12px;
-    color: #ff7b7b;
+    color: #e63946;
     margin-bottom: 12px;
   }
 
   .success {
     display: none;
     font-size: 12px;
-    color: #8de8b6;
+    color: #4ade80;
     margin-bottom: 12px;
     line-height: 1.5;
   }
@@ -121,7 +118,7 @@
   footer {
     text-align: center;
     font-size: 11px;
-    color: #71849a;
+    color: #3a4a5a;
     margin-top: 24px;
   }
 </style>
