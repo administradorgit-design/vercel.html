@@ -92,7 +92,7 @@
   .sidebar-overlay.visivel { display: block; }
 
   /* ── MAIN ── */
-  .main { flex: 1; margin-left: 240px; display: flex; flex-direction: column; min-height: 100vh; }
+  .main { flex: 1; margin-left: 240px; display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
   .topbar {
     background: rgba(10,15,12,0.85);
     border-bottom: 1px solid var(--border);
@@ -105,7 +105,7 @@
   .btn-menu-mobile { display: none; background: none; border: none; color: var(--text); cursor: pointer; padding: 4px; }
   .topbar-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 1.6px; text-transform: uppercase; flex: 1; }
   .topbar-user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }
-  .avatar { width: 34px; height: 34px; background: var(--surface-2); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--accent); }
+  .avatar { width: 34px; height: 34px; background: var(--surface-2); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--accent); flex-shrink:0; }
 
   .secao { display: none; padding: 32px; flex: 1; }
   .secao.ativa { display: block; }
@@ -239,9 +239,22 @@
       repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 3px);
     opacity: 0.5;
   }
+  .card-thumb .play-badge {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .card:hover .card-thumb .play-badge { opacity: 1; }
+  .card-thumb .play-badge svg { width: 40px; height: 40px; color: var(--accent); filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6)); }
   .card-body { padding: 14px 16px 18px; }
-  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
-  .card-desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .card-title {
+    font-size: 14px; font-weight: 600; margin-bottom: 3px;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .card-desc {
+    font-size: 12px; color: var(--muted); margin-bottom: 12px;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  }
   .card-progress-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
   .card-progress-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
   .card-progress-fill { height: 100%; background: var(--accent); border-radius: 999px; }
@@ -293,7 +306,7 @@
     z-index: 2;
   }
 
-  /* ── AULAS / DOWNLOADS / SUPORTE (kept simple) ── */
+  /* ── AULAS / DOWNLOADS / SUPORTE ── */
   .aulas-grid { display: flex; flex-direction: column; gap: 10px; }
   .aula-card {
     background: var(--surface);
@@ -310,12 +323,12 @@
   .aula-info { flex: 1; min-width: 0; }
   .aula-titulo { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
   .aula-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); }
-  .aula-status { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--border); border-radius: 4px; padding: 5px 10px; }
+  .aula-status { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--border); border-radius: 4px; padding: 5px 10px; flex-shrink:0; }
   .aula-status.ok { color: var(--accent); border-color: var(--accent-deep); }
 
-  .download-row { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; display: flex; align-items: center; gap: 18px; margin-bottom: 12px; }
+  .download-row { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; display: flex; align-items: center; gap: 18px; margin-bottom: 12px; flex-wrap: wrap; }
   .download-icon { width: 46px; height: 46px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
-  .download-info { flex: 1; min-width: 0; }
+  .download-info { flex: 1; min-width: 180px; }
   .download-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
   .download-desc { font-size: 12px; color: var(--muted); }
   .btn-baixar { background: var(--accent); color: #06120a; border: none; border-radius: 6px; padding: 11px 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.8px; cursor: pointer; flex-shrink: 0; }
@@ -354,16 +367,21 @@
     .rec-grid, .lanc-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 768px) {
+    body { display: block; }
     .sidebar { transform: translateX(-100%); }
     .sidebar.aberta { transform: translateX(0); }
     .btn-fechar-sidebar { display: block; }
     .btn-menu-mobile { display: flex; }
-    .main { margin-left: 0; }
+    .main { margin-left: 0; width: 100%; }
     .topbar { padding: 12px 16px; }
     .secao { padding: 18px 14px; }
-    .hero { min-height: 320px; }
-    .hero-content { padding: 24px; }
-    .hero-title { font-size: 44px; }
+    .hero { min-height: 300px; }
+    .hero-content { padding: 22px; max-width: 100%; }
+    .hero-title { font-size: 38px; letter-spacing: 1px; }
+    .hero-sub { font-size: 13.5px; margin: 14px 0 18px; }
+    .hero-actions { flex-direction: column; }
+    .hero-actions .btn-primary, .hero-actions .btn-secondary { width: 100%; justify-content: center; }
+    .hero-dots { left: 22px; bottom: 16px; }
     .rec-grid, .lanc-grid {
       display: flex;
       grid-template-columns: unset;
@@ -382,11 +400,22 @@
       width: 168px;
       scroll-snap-align: start;
     }
+    .progresso-card { padding: 18px; }
+    .aula-card { padding: 14px 16px; gap: 12px; }
+    .aula-titulo { font-size: 13px; }
+    .download-row { padding: 16px; gap: 12px; }
+    .suporte-card { padding: 20px; max-width: 100%; }
+    .modal { padding: 16px; }
+    .modal-titulo { font-size: 15px; }
+    .video-actions { gap: 8px; }
+    .btn-video-action, .btn-marcar { flex: 1 1 auto; text-align: center; padding: 10px 12px; font-size: 11.5px; }
     .topbar-user span { display: none; }
   }
   @media (max-width: 480px) {
-    .hero-title { font-size: 34px; }
-    .rec-grid .card, .lanc-grid .card { width: 148px; }
+    .hero-title { font-size: 30px; }
+    .hero { min-height: 260px; }
+    .rec-grid .card, .lanc-grid .card { width: 140px; }
+    .page-title { font-size: 20px; }
   }
 </style>
 </head>
@@ -469,43 +498,8 @@
     <div class="rec-wrap">
       <div>
         <div class="section-eyebrow">Recomendados para você</div>
-        <div class="rec-grid">
-          <div class="card">
-            <div class="card-thumb"><div class="noise"></div></div>
-            <div class="card-body">
-              <div class="card-title">Civilizações Perdidas</div>
-              <div class="card-desc">Mistérios do passado</div>
-              <div class="card-progress-label">84% concluído</div>
-              <div class="card-progress-bar"><div class="card-progress-fill" style="width:84%"></div></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-thumb"><div class="noise"></div></div>
-            <div class="card-body">
-              <div class="card-title">Hackers</div>
-              <div class="card-desc">A revolução silenciosa</div>
-              <div class="card-progress-label">61% concluído</div>
-              <div class="card-progress-bar"><div class="card-progress-fill" style="width:61%"></div></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-thumb"><div class="noise"></div></div>
-            <div class="card-body">
-              <div class="card-title">Vigilância Total</div>
-              <div class="card-desc">Até onde vão te observar?</div>
-              <div class="card-progress-label">37% concluído</div>
-              <div class="card-progress-bar"><div class="card-progress-fill" style="width:37%"></div></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-thumb"><div class="noise"></div></div>
-            <div class="card-body">
-              <div class="card-title">Além do Infinito</div>
-              <div class="card-desc">Os segredos do cosmos</div>
-              <div class="card-progress-label">91% concluído</div>
-              <div class="card-progress-bar"><div class="card-progress-fill" style="width:91%"></div></div>
-            </div>
-          </div>
+        <div class="rec-grid" id="recGrid">
+          <div style="color:var(--muted);font-size:13px;padding:8px 0">Carregando aulas...</div>
         </div>
       </div>
 
@@ -523,37 +517,10 @@
       </aside>
     </div>
 
-    <!-- LANÇAMENTOS -->
-    <div class="section-eyebrow">Lançamentos</div>
-    <div class="lanc-grid">
-      <div class="card">
-        <div class="card-thumb"><span class="badge-novo">NOVO EPISÓDIO</span><div class="noise"></div></div>
-        <div class="card-body">
-          <div class="card-title">Expedições Proibidas</div>
-          <div class="card-desc">Lugares que não deveriam ser encontrados</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-thumb"><div class="noise"></div></div>
-        <div class="card-body">
-          <div class="card-title">Arquivos Secretos</div>
-          <div class="card-desc">Documentos que mudaram o mundo</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-thumb"><div class="noise"></div></div>
-        <div class="card-body">
-          <div class="card-title">Conspirações Reais</div>
-          <div class="card-desc">Fatos que parecem ficção</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-thumb"><div class="noise"></div></div>
-        <div class="card-body">
-          <div class="card-title">Desaparecidos</div>
-          <div class="card-desc">Mistérios sem solução</div>
-        </div>
-      </div>
+    <!-- CONTINUE ASSISTINDO -->
+    <div class="section-eyebrow">Continue assistindo</div>
+    <div class="lanc-grid" id="lancGrid">
+      <div style="color:var(--muted);font-size:13px;padding:8px 0">Carregando aulas...</div>
     </div>
   </section>
 
@@ -688,8 +655,12 @@
       const pct = dados.total>0 ? Math.round((dados.assistidas/dados.total)*100) : 0;
       atualizarProgresso(pct);
       renderizarAulas();
+      renderizarRecomendados();
+      renderizarContinueAssistindo();
     }catch(e){
       lista.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px">Nenhuma aula disponível.</div>';
+      document.getElementById('recGrid').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">Nenhuma aula disponível.</div>';
+      document.getElementById('lancGrid').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">Nenhuma aula disponível.</div>';
     }
   }
 
@@ -712,6 +683,55 @@
     lista.querySelectorAll('.aula-card').forEach(c=>{
       c.addEventListener('click', ()=>abrirAula(c.dataset.aulaId, c.dataset.aulaTitulo));
     });
+  }
+
+  function cardAulaHTML(a){
+    const pct = a.assistido ? 100 : 0;
+    return `
+      <div class="card" data-aula-id="${a.id}" data-aula-titulo="${escaparHTML(a.titulo)}">
+        <div class="card-thumb">
+          <div class="noise"></div>
+          <div class="play-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.35)"/><path d="M10 8l6 4-6 4z" fill="currentColor"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${escaparHTML(a.titulo)}</div>
+          <div class="card-desc">${escaparHTML(a.modulo||a.duracao||'')}</div>
+          <div class="card-progress-label">${a.assistido?'Assistido':'Não iniciado'}</div>
+          <div class="card-progress-bar"><div class="card-progress-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function ligarCliquesCards(container){
+    container.querySelectorAll('.card[data-aula-id]').forEach(c=>{
+      c.addEventListener('click', ()=>abrirAula(c.dataset.aulaId, c.dataset.aulaTitulo));
+    });
+  }
+
+  function renderizarRecomendados(){
+    const grid = document.getElementById('recGrid');
+    if(!todasAulas.length){
+      grid.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">Nenhuma aula disponível.</div>';
+      return;
+    }
+    // aulas ainda não assistidas primeiro, depois as demais, limitado a 4
+    const ordenadas = [...todasAulas].sort((a,b)=> (a.assistido===b.assistido) ? a.ordem-b.ordem : (a.assistido?1:-1));
+    grid.innerHTML = ordenadas.slice(0,4).map(cardAulaHTML).join('');
+    ligarCliquesCards(grid);
+  }
+
+  function renderizarContinueAssistindo(){
+    const grid = document.getElementById('lancGrid');
+    if(!todasAulas.length){
+      grid.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">Nenhuma aula disponível.</div>';
+      return;
+    }
+    const ordenadas = [...todasAulas].sort((a,b)=>a.ordem-b.ordem);
+    grid.innerHTML = ordenadas.slice(0,4).map(cardAulaHTML).join('');
+    ligarCliquesCards(grid);
   }
 
   function atualizarProgresso(pct){
@@ -785,6 +805,8 @@
       const assistidas = todasAulas.filter(x=>x.assistido).length;
       atualizarProgresso(Math.round((assistidas/todasAulas.length)*100));
       renderizarAulas();
+      renderizarRecomendados();
+      renderizarContinueAssistindo();
     }catch(e){ alert('Erro ao salvar progresso.'); }
   }
 
