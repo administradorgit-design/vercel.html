@@ -364,12 +364,29 @@
     .hero { min-height: 320px; }
     .hero-content { padding: 24px; }
     .hero-title { font-size: 44px; }
-    .rec-grid, .lanc-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .rec-grid, .lanc-grid {
+      display: flex;
+      grid-template-columns: unset;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 12px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -14px;
+      padding: 2px 14px 10px;
+    }
+    .rec-grid::-webkit-scrollbar, .lanc-grid::-webkit-scrollbar { height: 4px; }
+    .rec-grid::-webkit-scrollbar-thumb, .lanc-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .rec-grid .card, .lanc-grid .card {
+      flex: 0 0 auto;
+      width: 168px;
+      scroll-snap-align: start;
+    }
     .topbar-user span { display: none; }
   }
   @media (max-width: 480px) {
-    .rec-grid, .lanc-grid { grid-template-columns: 1fr; }
     .hero-title { font-size: 34px; }
+    .rec-grid .card, .lanc-grid .card { width: 148px; }
   }
 </style>
 </head>
