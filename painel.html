@@ -621,9 +621,9 @@
 
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script>
-  const API_URL = window.API_URL || '';
-  const TOKEN = localStorage.getItem('token') || '';
-  if (!TOKEN) { location.href = '/'; }
+  const API_URL = window.UNIDATAS_API_URL || 'https://venc123-production.up.railway.app';
+  const TOKEN = sessionStorage.getItem('token') || '';
+  if (!TOKEN) { location.href = 'portal-login.html'; }
   const headers = () => ({ 'Content-Type':'application/json', 'Authorization': 'Bearer ' + TOKEN });
   let todasAulas = [];
   let aulaAtualId = null;
@@ -645,11 +645,12 @@
     s.classList.toggle('aberta'); o.classList.toggle('visivel');
   }
 
-  function sair(){ localStorage.removeItem('token'); location.href='/'; }
+  function sair(){ sessionStorage.clear(); location.href='portal-login.html'; }
 
   async function carregarPerfil(){
     try{
-      const res = await fetch(`${API_URL}/perfil`, { headers: headers() });
+      const res = await fetch(`${API_URL}/me`, { headers: headers() });
+      if (res.status === 401) { sessionStorage.clear(); location.href = 'portal-login.html'; return; }
       if(!res.ok) return;
       const dados = await res.json();
       const nome = (dados.nome || dados.email || 'Aluno').split('@')[0];
