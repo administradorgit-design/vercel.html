@@ -201,18 +201,12 @@
     margin-bottom: 16px;
   }
 
-  /* ── RECOMENDADOS + PROGRESSO ── */
-  .rec-wrap {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 24px;
-    margin-bottom: 36px;
-    align-items: start;
-  }
+  /* ── RECOMENDADOS ── */
   .rec-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
+    margin-bottom: 36px;
   }
   .card {
     background: var(--surface);
@@ -259,20 +253,6 @@
   .card-progress-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
   .card-progress-fill { height: 100%; background: var(--accent); border-radius: 999px; }
 
-  /* Progresso card lateral */
-  .progresso-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 22px;
-    text-align: center;
-  }
-  .progresso-ring { position: relative; width: 150px; height: 150px; margin: 12px auto 18px; }
-  .progresso-ring svg { transform: rotate(-90deg); }
-  .ring-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
-  .ring-fill { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 408; stroke-dashoffset: 408; transition: stroke-dashoffset 1s; }
-  .ring-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 28px; font-weight: 700; color: var(--text); }
-  .progresso-note { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.4; }
   .btn-outline {
     background: rgba(255,255,255,0.04);
     color: var(--text);
@@ -287,24 +267,6 @@
     transition: border-color 0.15s, color 0.15s;
   }
   .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* ── LANÇAMENTOS ── */
-  .lanc-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
-  .badge-novo {
-    position: absolute; top: 10px; left: 10px;
-    background: var(--accent);
-    color: #06120a;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 700;
-    padding: 4px 8px;
-    border-radius: 4px;
-    letter-spacing: 1px;
-    z-index: 2;
-  }
 
   /* ── AULAS / DOWNLOADS / SUPORTE ── */
   .aulas-grid { display: flex; flex-direction: column; gap: 10px; }
@@ -363,8 +325,7 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 1100px) {
-    .rec-wrap { grid-template-columns: 1fr; }
-    .rec-grid, .lanc-grid { grid-template-columns: repeat(2, 1fr); }
+    .rec-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 768px) {
     body { display: block; }
@@ -382,7 +343,7 @@
     .hero-actions { flex-direction: column; }
     .hero-actions .btn-primary, .hero-actions .btn-secondary { width: 100%; justify-content: center; }
     .hero-dots { left: 22px; bottom: 16px; }
-    .rec-grid, .lanc-grid {
+    .rec-grid {
       display: flex;
       grid-template-columns: unset;
       overflow-x: auto;
@@ -393,14 +354,13 @@
       margin: 0 -14px;
       padding: 2px 14px 10px;
     }
-    .rec-grid::-webkit-scrollbar, .lanc-grid::-webkit-scrollbar { height: 4px; }
-    .rec-grid::-webkit-scrollbar-thumb, .lanc-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-    .rec-grid .card, .lanc-grid .card {
+    .rec-grid::-webkit-scrollbar { height: 4px; }
+    .rec-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .rec-grid .card {
       flex: 0 0 auto;
       width: 168px;
       scroll-snap-align: start;
     }
-    .progresso-card { padding: 18px; }
     .aula-card { padding: 14px 16px; gap: 12px; }
     .aula-titulo { font-size: 13px; }
     .download-row { padding: 16px; gap: 12px; }
@@ -414,7 +374,7 @@
   @media (max-width: 480px) {
     .hero-title { font-size: 30px; }
     .hero { min-height: 260px; }
-    .rec-grid .card, .lanc-grid .card { width: 140px; }
+    .rec-grid .card { width: 140px; }
     .page-title { font-size: 20px; }
   }
 </style>
@@ -494,32 +454,9 @@
       </div>
     </div>
 
-    <!-- RECOMENDADOS + PROGRESSO -->
-    <div class="rec-wrap">
-      <div>
-        <div class="section-eyebrow">Recomendados para você</div>
-        <div class="rec-grid" id="recGrid">
-          <div style="color:var(--muted);font-size:13px;padding:8px 0">Carregando aulas...</div>
-        </div>
-      </div>
-
-      <aside class="progresso-card">
-        <div class="section-eyebrow" style="margin-bottom:4px">Seu Progresso</div>
-        <div class="progresso-ring">
-          <svg width="150" height="150" viewBox="0 0 150 150">
-            <circle class="ring-track" cx="75" cy="75" r="65"/>
-            <circle class="ring-fill" id="ringFill" cx="75" cy="75" r="65"/>
-          </svg>
-          <div class="ring-pct" id="ringPct">0%</div>
-        </div>
-        <p class="progresso-note" id="progressNote">Vamos começar!</p>
-        <button class="btn-outline" onclick="trocarSecao('aulas', document.querySelectorAll('.nav-item')[1])">Ver meus cursos</button>
-      </aside>
-    </div>
-
-    <!-- CONTINUE ASSISTINDO -->
-    <div class="section-eyebrow">Continue assistindo</div>
-    <div class="lanc-grid" id="lancGrid">
+    <!-- RECOMENDADOS -->
+    <div class="section-eyebrow">Recomendados para você</div>
+    <div class="rec-grid" id="recGrid">
       <div style="color:var(--muted);font-size:13px;padding:8px 0">Carregando aulas...</div>
     </div>
   </section>
@@ -652,15 +589,11 @@
       if(!res.ok) throw new Error();
       const dados = await res.json();
       todasAulas = dados.aulas || [];
-      const pct = dados.total>0 ? Math.round((dados.assistidas/dados.total)*100) : 0;
-      atualizarProgresso(pct);
       renderizarAulas();
       renderizarRecomendados();
-      renderizarContinueAssistindo();
     }catch(e){
       lista.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px">Nenhuma aula disponível.</div>';
       document.getElementById('recGrid').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">Nenhuma aula disponível.</div>';
-      document.getElementById('lancGrid').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">Nenhuma aula disponível.</div>';
     }
   }
 
@@ -723,29 +656,6 @@
     ligarCliquesCards(grid);
   }
 
-  function renderizarContinueAssistindo(){
-    const grid = document.getElementById('lancGrid');
-    if(!todasAulas.length){
-      grid.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">Nenhuma aula disponível.</div>';
-      return;
-    }
-    const ordenadas = [...todasAulas].sort((a,b)=>a.ordem-b.ordem);
-    grid.innerHTML = ordenadas.slice(0,4).map(cardAulaHTML).join('');
-    ligarCliquesCards(grid);
-  }
-
-  function atualizarProgresso(pct){
-    const offset = 408 - (pct/100)*408;
-    document.getElementById('ringFill').style.strokeDashoffset = offset;
-    document.getElementById('ringPct').textContent = pct+'%';
-    let msg='Vamos começar!';
-    if(pct>=100) msg='Curso concluído! 🎉';
-    else if(pct>=75) msg='Parabéns! Você está indo muito bem.';
-    else if(pct>=50) msg='Você está na metade!';
-    else if(pct>=25) msg='Bom progresso!';
-    document.getElementById('progressNote').textContent = msg;
-  }
-
   async function abrirAula(aulaId, titulo){
     try{
       const res = await fetch(`${API_URL}/aula/${aulaId}`, { headers: headers() });
@@ -802,11 +712,8 @@
       if(!res.ok) throw new Error();
       const a = todasAulas.find(x=>x.id===aulaAtualId); if(a) a.assistido=true;
       const btn=document.getElementById('btnMarcar'); btn.textContent='✓ Já assistido'; btn.disabled=true;
-      const assistidas = todasAulas.filter(x=>x.assistido).length;
-      atualizarProgresso(Math.round((assistidas/todasAulas.length)*100));
       renderizarAulas();
       renderizarRecomendados();
-      renderizarContinueAssistindo();
     }catch(e){ alert('Erro ao salvar progresso.'); }
   }
 
